@@ -1,10 +1,10 @@
 BOOL :false
-BOOL :true
+BOOL :false
 BOOL :true
 INT :0
 INT :1
 BOOL :true
-BOOL :true
+BOOL :false
 BOOL :true
 BOOL :true
 INT :6

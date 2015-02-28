@@ -133,7 +133,7 @@ public class DeckPreferences implements ActionListener, WindowListener, ChangeLi
 		try
 		{
 			String folder = modus_classname.substring(0, modus_classname.lastIndexOf("/"));
-			String name = modus_classname.substring(modus_classname.indexOf("/") + 1);
+			String name = modus_classname.substring(modus_classname.lastIndexOf("/") + 1);
 			System.out.println("Folder: " + folder + " Name: " + name);
 			File classes = new File("modi/" + folder);
 			URL url = classes.toURI().toURL();
