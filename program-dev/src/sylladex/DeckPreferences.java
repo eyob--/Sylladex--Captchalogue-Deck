@@ -133,7 +133,7 @@ public class DeckPreferences implements ActionListener, WindowListener, ChangeLi
 		try
 		{
 			String folder = modus_classname.substring(0, modus_classname.lastIndexOf("/"));
-			String name = modus_classname.substring(modus_classname.indexOf("/") + 1);
+			String name = modus_classname.substring(modus_classname.lastIndexOf("/") + 1);
 			System.out.println("Folder: " + folder + " Name: " + name);
 			File classes = new File("modi/" + folder);
 			URL url = classes.toURI().toURL();
@@ -368,7 +368,7 @@ public class DeckPreferences implements ActionListener, WindowListener, ChangeLi
 	 */
 	public boolean top()
 	{
-		return (boolean) core_preferences.get(PREF_TOP);
+		return (Boolean) core_preferences.get(PREF_TOP);
 	}
 	
 	/**
@@ -376,7 +376,7 @@ public class DeckPreferences implements ActionListener, WindowListener, ChangeLi
 	 */
 	public boolean autohide_dock()
 	{
-		return (boolean) core_preferences.get(PREF_AUTOHIDE_DOCK);
+		return (Boolean) core_preferences.get(PREF_AUTOHIDE_DOCK);
 	}
 	
 	/**
@@ -384,7 +384,7 @@ public class DeckPreferences implements ActionListener, WindowListener, ChangeLi
 	 */
 	public boolean always_on_top_dock()
 	{
-		return (boolean) core_preferences.get(PREF_ALWAYS_ON_TOP_DOCK);
+		return (Boolean) core_preferences.get(PREF_ALWAYS_ON_TOP_DOCK);
 	}
 	
 	/**
@@ -392,7 +392,7 @@ public class DeckPreferences implements ActionListener, WindowListener, ChangeLi
 	 */
 	public int captchalogue_mode()
 	{
-		return (int) core_preferences.get(PREF_CAPTCHALOGUE_MODE);
+		return (Integer) core_preferences.get(PREF_CAPTCHALOGUE_MODE);
 	}
 	
 	/**
@@ -400,7 +400,7 @@ public class DeckPreferences implements ActionListener, WindowListener, ChangeLi
 	 */
 	public int offset()
 	{
-		return (int) core_preferences.get(PREF_OFFSET);
+		return (Integer) core_preferences.get(PREF_OFFSET);
 	}
 	
 	/**
@@ -408,7 +408,7 @@ public class DeckPreferences implements ActionListener, WindowListener, ChangeLi
 	 */
 	public boolean name_items()
 	{
-		return (boolean) core_preferences.get(PREF_NAME_ITEMS);
+		return (Boolean) core_preferences.get(PREF_NAME_ITEMS);
 	}
 	
 	/**
@@ -416,7 +416,7 @@ public class DeckPreferences implements ActionListener, WindowListener, ChangeLi
 	 */
 	public boolean autohide_cards()
 	{
-		return (boolean) core_preferences.get(PREF_AUTOHIDE_CARDS);
+		return (Boolean) core_preferences.get(PREF_AUTOHIDE_CARDS);
 	}
 	
 	/**
@@ -424,17 +424,17 @@ public class DeckPreferences implements ActionListener, WindowListener, ChangeLi
 	 */
 	public boolean always_on_top_cards()
 	{
-		return (boolean) core_preferences.get(PREF_ALWAYS_ON_TOP_CARDS);
+		return (Boolean) core_preferences.get(PREF_ALWAYS_ON_TOP_CARDS);
 	}
 	
 	public int number_of_cards()
 	{
-		return (int) core_preferences.get(PREF_NUMBER_OF_CARDS);
+		return (Integer) core_preferences.get(PREF_NUMBER_OF_CARDS);
 	}
 	
 	public boolean auto_captcha()
 	{
-		return (boolean) core_preferences.get(PREF_AUTO_CAPTCHA);
+		return (Boolean) core_preferences.get(PREF_AUTO_CAPTCHA);
 	}
 	
 	/**
@@ -463,22 +463,22 @@ public class DeckPreferences implements ActionListener, WindowListener, ChangeLi
 	
 	public int leftClickAction()
 	{
-		return (int) core_preferences.get(PREF_LEFT_CLICK);
+		return (Integer) core_preferences.get(PREF_LEFT_CLICK);
 	}
 	
 	public int leftModClickAction()
 	{
-		return (int) core_preferences.get(PREF_LEFT_MOD_CLICK);
+		return (Integer) core_preferences.get(PREF_LEFT_MOD_CLICK);
 	}
 	
 	public int rightClickAction()
 	{
-		return (int) core_preferences.get(PREF_RIGHT_CLICK);
+		return (Integer) core_preferences.get(PREF_RIGHT_CLICK);
 	}
 	
 	public int rightModClickAction()
 	{
-		return (int) core_preferences.get(PREF_RIGHT_MOD_CLICK);
+		return (Integer) core_preferences.get(PREF_RIGHT_MOD_CLICK);
 	}
 	
 	//Swing
@@ -522,41 +522,41 @@ public class DeckPreferences implements ActionListener, WindowListener, ChangeLi
 		//Components
 		String[] topstrings = { "Bottom", "Top" };
 		topbox = new JComboBox<String>(topstrings);
-			if((boolean) core_preferences.get(PREF_TOP))
+			if((Boolean) core_preferences.get(PREF_TOP))
 			{ topbox.setSelectedIndex(1); } else { topbox.setSelectedIndex(0); }
 			topbox.addActionListener(this);
 		
 		dock_offset = new JSlider(JSlider.HORIZONTAL, -90, 200, 
-				(int) core_preferences.get(PREF_OFFSET));
+				(Integer) core_preferences.get(PREF_OFFSET));
 			dock_offset.addChangeListener(this);
 		
 		ahdock = new JCheckBox("Auto-hide");
-			ahdock.setSelected((boolean) core_preferences.get(PREF_AUTOHIDE_DOCK));
+			ahdock.setSelected((Boolean) core_preferences.get(PREF_AUTOHIDE_DOCK));
 			ahdock.addActionListener(this);
 		aotdock = new JCheckBox("Always on top");
-			aotdock.setSelected((boolean) core_preferences.get(PREF_ALWAYS_ON_TOP_DOCK));
+			aotdock.setSelected((Boolean) core_preferences.get(PREF_ALWAYS_ON_TOP_DOCK));
 			aotdock.addActionListener(this);
 			
 		captchalogue_mode = new JComboBox<String>();
 			captchalogue_mode.addItem("Link");
 			captchalogue_mode.addItem("Copy");
 			captchalogue_mode.addItem("Move");
-			captchalogue_mode.setSelectedIndex((int) core_preferences.get(PREF_CAPTCHALOGUE_MODE));
+			captchalogue_mode.setSelectedIndex((Integer) core_preferences.get(PREF_CAPTCHALOGUE_MODE));
 			captchalogue_mode.addActionListener(this);
-			
 		autocaptcha = new JCheckBox("Auto-captchalogue clipboard");
-			autocaptcha.setSelected((boolean) core_preferences.get(PREF_AUTO_CAPTCHA));
+			autocaptcha.setSelected((Boolean) core_preferences.get(PREF_AUTO_CAPTCHA));
 			autocaptcha.addActionListener(this);
 			
 		nameitems = new JCheckBox("Always prompt for image names");
-			nameitems.setSelected((boolean) core_preferences.get(PREF_NAME_ITEMS));
+		
+			nameitems.setSelected((Boolean) core_preferences.get(PREF_NAME_ITEMS));
 			nameitems.addActionListener(this);
 			
 		ahcards = new JCheckBox("Auto-hide");
-			ahcards.setSelected((boolean) core_preferences.get(PREF_AUTOHIDE_CARDS));
+			ahcards.setSelected((Boolean) core_preferences.get(PREF_AUTOHIDE_CARDS));
 			ahcards.addActionListener(this);
 		aotcards = new JCheckBox("Always on top");
-			aotcards.setSelected((boolean) core_preferences.get(PREF_ALWAYS_ON_TOP_CARDS));
+			aotcards.setSelected((Boolean) core_preferences.get(PREF_ALWAYS_ON_TOP_CARDS));
 			aotcards.addActionListener(this);
 		
 		JPanel buttonpanel = new JPanel();
@@ -611,7 +611,7 @@ public class DeckPreferences implements ActionListener, WindowListener, ChangeLi
 			leftclick.addItem("Open and eject");
 			leftclick.addItem("Flip");
 			leftclick.addItem("Open popup menu");
-			leftclick.setSelectedIndex((int) core_preferences.get(PREF_LEFT_CLICK));
+			leftclick.setSelectedIndex((Integer) core_preferences.get(PREF_LEFT_CLICK));
 			leftclick.addActionListener(this);
 			mouse_panel.add(leftclick);
 		
@@ -622,7 +622,7 @@ public class DeckPreferences implements ActionListener, WindowListener, ChangeLi
 			leftmodclick.addItem("Open and eject");
 			leftmodclick.addItem("Flip");
 			leftmodclick.addItem("Open popup menu");
-			leftmodclick.setSelectedIndex((int) core_preferences.get(PREF_LEFT_MOD_CLICK));
+			leftmodclick.setSelectedIndex((Integer) core_preferences.get(PREF_LEFT_MOD_CLICK));
 			leftmodclick.addActionListener(this);
 			mouse_panel.add(leftmodclick);
 			
@@ -633,7 +633,7 @@ public class DeckPreferences implements ActionListener, WindowListener, ChangeLi
 			rightclick.addItem("Open and eject");
 			rightclick.addItem("Flip");
 			rightclick.addItem("Open popup menu");
-			rightclick.setSelectedIndex((int) core_preferences.get(PREF_RIGHT_CLICK));
+			rightclick.setSelectedIndex((Integer) core_preferences.get(PREF_RIGHT_CLICK));
 			rightclick.addActionListener(this);
 			mouse_panel.add(rightclick);
 			
@@ -644,7 +644,7 @@ public class DeckPreferences implements ActionListener, WindowListener, ChangeLi
 			rightmodclick.addItem("Open and eject");
 			rightmodclick.addItem("Flip");
 			rightmodclick.addItem("Open popup menu");
-			rightmodclick.setSelectedIndex((int) core_preferences.get(PREF_RIGHT_MOD_CLICK));
+			rightmodclick.setSelectedIndex((Integer) core_preferences.get(PREF_RIGHT_MOD_CLICK));
 			rightmodclick.addActionListener(this);
 			mouse_panel.add(rightmodclick);
 	}
@@ -669,6 +669,7 @@ public class DeckPreferences implements ActionListener, WindowListener, ChangeLi
 			"evacipatedBox<br/>" +
 			"mezzoEmrys<br/>" +
 			"Nokob<br/>" +
+			"eyob--<br/>" +
 			"-----<br/>" +
 			"<b>Additional Appearance Sculptors:</b><br/>" +
 			"aquaMarinist<br/>" +
@@ -803,8 +804,8 @@ public class DeckPreferences implements ActionListener, WindowListener, ChangeLi
 		}
 		deck.refreshDock();
 		deck.refreshCardHolder();
-		if((boolean) core_preferences.get(PREF_AUTOHIDE_DOCK)){ deck.hideDock(); }
-		if((boolean) core_preferences.get(PREF_AUTOHIDE_CARDS)) { deck.getCardHolder().setVisible(false); }
+		if((Boolean) core_preferences.get(PREF_AUTOHIDE_DOCK)){ deck.hideDock(); }
+		if((Boolean) core_preferences.get(PREF_AUTOHIDE_CARDS)) { deck.getCardHolder().setVisible(false); }
 	}
 	
 	@Override

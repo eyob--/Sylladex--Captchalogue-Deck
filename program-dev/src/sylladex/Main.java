@@ -62,7 +62,7 @@ import util.RW;
 import util.Util;
 import util.Util.OpenReason;
 
-/** Holds all the cards. Also provides utility functions for the other classes. */
+/** Holds all the cards (all of them). Also provides utility functions for the other classes. */
 public class Main implements ActionListener, WindowListener
 {
 	//Referred to as "deck" by other classes.
