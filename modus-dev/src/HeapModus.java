@@ -16,6 +16,8 @@ public class HeapModus extends FetchModus {
 
 	Heap heap = new Heap();
 	
+	private static final int PREF_ROOT_ACCESS = 0;
+	
 	public HeapModus(Main m) {
 		super(m);
 	}
@@ -58,7 +60,27 @@ public class HeapModus extends FetchModus {
 
 	@Override
 	public void initialSettings() {
-		// TODO Auto-generated method stub
+		settings.set_dock_text_image("modi/canon/heap/text.png");
+		settings.set_dock_card_image("modi/canon/heap/dockcard.png");
+		settings.set_card_image("modi/canon/heap/card.png");
+		settings.set_card_back_image("modi/canon/heap/back.png");
+		
+		settings.set_modus_image("modi/canon/heap/modus.png");
+		settings.set_name("Heap");
+		settings.set_author("eyob--");
+		
+		settings.set_preferences_file("modi/prefs/heapprefs.txt");
+		
+		settings.set_background_color(15, 80, 219);
+		settings.set_secondary_color(33, 78, 137);
+		settings.set_text_color(255, 242, 0);
+		
+		settings.set_initial_card_number(8);
+		settings.set_origin(20, 120);
+		
+		settings.set_card_size(94, 119);
+		
+		settings.set_shade_inaccessible_cards(false);
 		
 	}
 
@@ -77,8 +99,12 @@ public class HeapModus extends FetchModus {
 
 	@Override
 	public void prepare() {
-		// TODO Auto-generated method stub
-		
+		if (preferences.size() == 0) {
+			preferences.add("true");
+		}
+		populatePreferencesPanel();
+		deck.getCardDisplayManager().setMargin(settings.get_card_height());
+		heap = new Heap();
 	}
 
 	@Override
@@ -102,6 +128,18 @@ public class HeapModus extends FetchModus {
 		heap.clear();
 		
 		arrangeCards(false);
+	}
+	
+	private int getLayer(int x, int y) {
+		if (preferences.get(PREF_ROOT_ACCESS).equals("true"))
+		{
+			return deck.getCardHolder().getHeight() - y - x;
+		}
+		return y - x;
+	}
+	
+	private void populatePreferencesPanel() {
+		// TODO actually populate the prefs panel
 	}
 	
 	public class Heap implements Iterable<Heap.Node>, Iterator<Heap.Node> {
