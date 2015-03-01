@@ -7,6 +7,7 @@ import java.util.Iterator;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JToggleButton;
 
 import sylladex.CaptchalogueCard;
@@ -15,6 +16,7 @@ import sylladex.Main;
 import sylladex.SylladexItem;
 import util.Animation;
 import util.Animation.AnimationType;
+import util.Util;
 import util.Util.OpenReason;
 
 
@@ -32,9 +34,40 @@ public class HeapModus extends FetchModus {
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent arg0) {
-		// TODO Auto-generated method stub
-		
+	public void actionPerformed(ActionEvent e) {
+		if (e.getActionCommand().equals("heap_animation_complete")) {
+			arrangeCards();
+		}
+		else if (e.getActionCommand().equals("heap_animation_continue")) {
+			Object target = ((Animation) e.getSource()).getAnimationTarget();
+			if (target instanceof CaptchalogueCard) {
+				CaptchalogueCard card = (CaptchalogueCard) target;
+				card.setVisible(true);
+				card.setLayer(getLayer(card.getX(), card.getY() + settings.get_card_height()));
+			}
+		}
+		else if (e.getActionCommand().equals("heap_eject")) {
+			int n = JOptionPane.showOptionDialog(preferences_panel, "EJECT ALL ITEMS FROM SYLLADEX?", "",
+					JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, new Object[]{"Y","N"}, "N");
+			if (n == 0) eject(OpenReason.USER_EJECT);
+		}
+		else if (e.getActionCommand().equals("heap_root")) {
+			preferences.set(PREF_ROOT_ACCESS, "true");
+			leafButton.setSelected(false);
+			arrangeCards();
+		}
+		else if (e.getActionCommand().equals("heap_leaf")) {
+			preferences.set(PREF_ROOT_ACCESS, "false");
+			rootButton.setSelected(false);
+			arrangeCards();
+		}
+		else if (e.getActionCommand().equals(Util.ACTION_CARD_MOUSE_ENTER)) {
+			((CaptchalogueCard) e.getSource()).setLayer(deck.getCardHolder().getHeight());
+		}
+		else if (e.getActionCommand().equals(Util.ACTION_CARD_MOUSE_EXIT)) {
+			CaptchalogueCard card = (CaptchalogueCard) e.getSource();
+			card.setLayer(getLayer(card.getX(), card.getY()));
+		}
 	}
 
 	@Override
@@ -201,14 +234,14 @@ public class HeapModus extends FetchModus {
 			preferences_panel.add(ejectButton);
 			
 		rootButton = new JToggleButton("ROOT");
-			rootButton.setActionCommand("tree_root");
+			rootButton.setActionCommand("heap_root");
 			rootButton.addActionListener(this);
 			rootButton.setBounds(58,181,84,36);
 			rootButton.setSelected(Boolean.parseBoolean(preferences.get(PREF_ROOT_ACCESS)));
 			preferences_panel.add(rootButton);
 
 		leafButton = new JToggleButton("LEAF");
-			leafButton.setActionCommand("tree_leaf");
+			leafButton.setActionCommand("heap_leaf");
 			leafButton.addActionListener(this);
 			leafButton.setBounds(142,181,84,36);
 			leafButton.setSelected(!Boolean.parseBoolean(preferences.get(PREF_ROOT_ACCESS)));
@@ -324,7 +357,7 @@ public class HeapModus extends FetchModus {
 		public void remove(CaptchalogueCard card) {
 			Node node = getNodeWithCard(card);
 			
-			// apparently we can only remove leaves (laaaaaaaame)
+			// apparently we can only remove leafs (laaaaaaaame)
 			if (!node.isLeaf()) return;
 			
 			if (node.parent != null) {
@@ -340,7 +373,8 @@ public class HeapModus extends FetchModus {
 		
 		public void buildAnimation(CaptchalogueCard card) {
 			card.setLocation(new Point(0, 0));
-			root.buildAnimation(card);
+			Node insert = nodeToInsertOn();
+			nodeToInsertOn().buildAnimation(card);
 		}
 		
 		public class Node {
@@ -397,7 +431,7 @@ public class HeapModus extends FetchModus {
 				return null;
 			}
 			
-			public void buildAnimation(CaptchalogueCard card) {
+			public void buildAnimation(CaptchalogueCard c) {
 				// TODO write this
 			}
 		}
