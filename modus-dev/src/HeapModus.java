@@ -1,7 +1,13 @@
+import java.awt.Dimension;
+import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
+
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JToggleButton;
 
 import sylladex.CaptchalogueCard;
 import sylladex.FetchModus;
@@ -15,6 +21,9 @@ import util.Util.OpenReason;
 public class HeapModus extends FetchModus {
 
 	Heap heap = new Heap();
+	
+	private JToggleButton rootButton;
+	private JToggleButton leafButton;
 	
 	private static final int PREF_ROOT_ACCESS = 0;
 	
@@ -112,6 +121,11 @@ public class HeapModus extends FetchModus {
 		arrangeCards(false);
 	}
 	
+	@Override
+	public void refreshDock() {
+		arrangeCards(false);
+	}
+	
 	private void arrangeCards(boolean animate) {
 		// TODO write this method
 	}
@@ -139,7 +153,30 @@ public class HeapModus extends FetchModus {
 	}
 	
 	private void populatePreferencesPanel() {
-		// TODO actually populate the prefs panel
+		preferences_panel.setLayout(null);
+		preferences_panel.setPreferredSize(new Dimension(270, 300));
+		
+		JButton ejectButton = new JButton("EJECT");
+			ejectButton.setActionCommand("heap_eject");
+			ejectButton.addActionListener(this);
+			ejectButton.setBounds(77, 7, 162, 68);
+			preferences_panel.add(ejectButton);
+			
+		rootButton = new JToggleButton("ROOT");
+			rootButton.setActionCommand("tree_root");
+			rootButton.addActionListener(this);
+			rootButton.setBounds(58,181,84,36);
+			rootButton.setSelected(Boolean.parseBoolean(preferences.get(PREF_ROOT_ACCESS)));
+			preferences_panel.add(rootButton);
+
+		leafButton = new JToggleButton("LEAF");
+			leafButton.setActionCommand("tree_leaf");
+			leafButton.addActionListener(this);
+			leafButton.setBounds(142,181,84,36);
+			leafButton.setSelected(!Boolean.parseBoolean(preferences.get(PREF_ROOT_ACCESS)));
+			preferences_panel.add(leafButton);
+			
+		preferences_panel.validate();
 	}
 	
 	public class Heap implements Iterable<Heap.Node>, Iterator<Heap.Node> {
@@ -326,5 +363,30 @@ public class HeapModus extends FetchModus {
 				// TODO write this
 			}
 		}
+	}
+	
+	@SuppressWarnings("serial")
+	private class Brace extends JLabel {
+		
+		boolean above = false;
+		
+		public void setAbove(boolean above) {
+			this.above = above;
+		}
+		
+		public void paintComponent(Graphics g) {
+			g.setColor(settings.get_secondary_color());
+			if (above) {
+				g.drawLine(0, getHeight(), 0, 0);
+				g.drawLine(0, 0, getWidth(), 0);
+				g.drawLine(getWidth()-1, 0, getWidth()-1, getHeight());
+			}
+			else {
+				g.drawLine(0, 0, 0, getHeight()-1);
+				g.drawLine(0, getHeight()-1, getWidth(), getHeight()-1);
+				g.drawLine(getWidth()-1, getHeight()-1, getWidth()-1, 0);
+			}
+		}
+		
 	}
 }
