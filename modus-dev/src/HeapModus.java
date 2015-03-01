@@ -40,7 +40,7 @@ public class HeapModus extends FetchModus {
 	@Override
 	public void addCard() {
 		deck.addCard();
-		arrangeCards(false);
+		arrangeCards();
 	}
 
 	@Override
@@ -97,12 +97,12 @@ public class HeapModus extends FetchModus {
 	public void open(CaptchalogueCard card, OpenReason reason) {
 		if (heap.getNodeWithCard(card).isRoot()) {
 			eject(OpenReason.MODUS_DEFAULT);
-			arrangeCards(false);
+			arrangeCards();
 		}
 		else {
 			deck.open(card, reason);
 			heap.remove(card);
-			arrangeCards(false);
+			arrangeCards();
 		}
 	}
 
@@ -118,16 +118,54 @@ public class HeapModus extends FetchModus {
 
 	@Override
 	public void ready() {
-		arrangeCards(false);
+		arrangeCards();
 	}
 	
 	@Override
 	public void refreshDock() {
-		arrangeCards(false);
+		arrangeCards();
 	}
 	
-	private void arrangeCards(boolean animate) {
-		// TODO write this method
+	private void arrangeCards() {
+		deck.setIcons(getCardOrder());
+		foreground.removeAll();
+		
+		for (CaptchalogueCard card : deck.getCards()) {
+			if (heap == null || heap.getNodeWithCard(card) == null)
+				card.setVisible(false);
+		}
+		
+		if (deck.isEmpty()) return;
+		
+		for (Heap.Node node : heap) {
+			CaptchalogueCard card = node.card;
+			
+			card.setLocation(new Point(node.getX(), node.getY()));
+			card.setVisible(true);
+			card.setAccessible(Boolean.parseBoolean(preferences.get(PREF_ROOT_ACCESS)) && node.isRoot() ||
+					!Boolean.parseBoolean(preferences.get(PREF_ROOT_ACCESS)) && node.isLeaf());
+			
+			card.setLayer(getLayer(node.getX(), node.getY()));
+			
+			if (node.left != null) {
+				Brace b = new Brace();
+				b.setAbove(true);
+				int width = node.left.card.getDockIcon().getX() - card.getDockIcon().getX() - 3;
+				b.setBounds(card.getDockIcon().getX()+16, deck.getDockIconYPosition()-2, width, 8);
+				foreground.add(b);
+			}
+			if (node.right != null) {
+				Brace b = new Brace();
+				int width = node.right.card.getDockIcon().getX() - card.getDockIcon().getX() - 3;
+				b.setBounds(card.getDockIcon().getX()+16, deck.getDockIconYPosition()+52, width, 8);
+				foreground.add(b);
+			}
+			
+		}
+		
+		deck.getCardDisplayManager().unfreeze();
+		deck.getCardDisplayManager().freeze();
+		
 	}
 	
 	private void eject(OpenReason reason) {
@@ -141,7 +179,7 @@ public class HeapModus extends FetchModus {
 		// and clear the heap
 		heap.clear();
 		
-		arrangeCards(false);
+		arrangeCards();
 	}
 	
 	private int getLayer(int x, int y) {
