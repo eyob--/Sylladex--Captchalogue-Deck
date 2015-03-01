@@ -7,4 +7,4 @@ name_items:true
 autohide_cards:false
 always_on_top_cards:true
 copy:false
-fetchmodus:StackModus
+fetchmodus:TreeModus
