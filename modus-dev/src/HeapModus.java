@@ -3,10 +3,13 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import sylladex.CaptchalogueCard;
 import sylladex.FetchModus;
 import sylladex.Main;
-import sylladex.SylladexCard;
 import sylladex.SylladexItem;
+import util.Animation;
+import util.Animation.AnimationType;
+import util.Util.OpenReason;
 
 
 public class HeapModus extends FetchModus {
@@ -31,14 +34,26 @@ public class HeapModus extends FetchModus {
 
 	@Override
 	public boolean captchalogue(SylladexItem item) {
-		// TODO Auto-generated method stub
-		return false;
+		if (deck.isFull()) return false;
+		
+		CaptchalogueCard card = deck.captchalogueItemAndReturnCard(item);
+		heap.add(card);
+		
+		heap.buildAnimation(card);
+		Animation a = new Animation(AnimationType.WAIT, 10, this, "heap_animation_complete");
+		a.setAnimationTarget(card);
+		deck.addAnimation(a);
+		return true;
 	}
-
+	
 	@Override
 	public Object[] getCardOrder() {
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList<CaptchalogueCard> cards = new ArrayList<CaptchalogueCard>();
+		if (heap != null && heap.root != null) {
+			for (Heap.Node n : heap)
+				cards.add(n.card);
+		}
+		return cards.toArray();
 	}
 
 	@Override
@@ -48,9 +63,16 @@ public class HeapModus extends FetchModus {
 	}
 
 	@Override
-	public void open(SylladexCard arg0) {
-		// TODO Auto-generated method stub
-		
+	public void open(CaptchalogueCard card, OpenReason reason) {
+		if (heap.getNodeWithCard(card).isRoot()) {
+			eject(OpenReason.MODUS_DEFAULT);
+			arrangeCards(false);
+		}
+		else {
+			deck.open(card, reason);
+			heap.remove(card);
+			arrangeCards(false);
+		}
 	}
 
 	@Override
@@ -61,12 +83,25 @@ public class HeapModus extends FetchModus {
 
 	@Override
 	public void ready() {
-		// TODO Auto-generated method stub
-		
+		arrangeCards(false);
 	}
 	
 	private void arrangeCards(boolean animate) {
 		// TODO write this method
+	}
+	
+	private void eject(OpenReason reason) {
+		// open all sub nodes
+		for (Heap.Node node : heap)
+			if (!node.isRoot()) deck.open(node.card, reason);
+		
+		// open root node
+		deck.open(heap.getRoot().card, reason);
+		
+		// and clear the heap
+		heap.clear();
+		
+		arrangeCards(false);
 	}
 	
 	public class Heap implements Iterable<Heap.Node>, Iterator<Heap.Node> {
@@ -80,7 +115,7 @@ public class HeapModus extends FetchModus {
 
 		@Override
 		public boolean hasNext() {
-			for (SylladexCard card : deck.getCards()) {
+			for (CaptchalogueCard card : deck.getCards()) {
 				Node node = getNodeWithCard(card);
 				// if there's no root, why are you iterating???
 				if (node == null) break;
@@ -133,7 +168,7 @@ public class HeapModus extends FetchModus {
 			root = null;
 		}
 		
-		public void add(SylladexCard card) {
+		public void add(CaptchalogueCard card) {
 			Node node = new Node(card);
 			if (root == null) {
 				root = node;
@@ -173,7 +208,7 @@ public class HeapModus extends FetchModus {
 			}
 		}
 		
-		public void remove(SylladexCard card) {
+		public void remove(CaptchalogueCard card) {
 			Node node = getNodeWithCard(card);
 			
 			// apparently we can only remove leaves (laaaaaaaame)
@@ -185,26 +220,26 @@ public class HeapModus extends FetchModus {
 			}
 		}
 		
-		public Node getNodeWithCard(SylladexCard card) {
+		public Node getNodeWithCard(CaptchalogueCard card) {
 			if (root != null) return root.getNodeWithCard(card);
 			return null;
 		}
 		
-		public void buildAnimation(SylladexCard card) {
+		public void buildAnimation(CaptchalogueCard card) {
 			card.setLocation(new Point(0, 0));
 			root.buildAnimation(card);
 		}
 		
 		public class Node {
 			
-			private SylladexCard card;
+			private CaptchalogueCard card;
 			private Node left = null;
 			private Node right = null;
 			private Node parent = null;
 			
 			private int card_height = settings.get_card_height();
 			
-			public Node(SylladexCard card) {
+			public Node(CaptchalogueCard card) {
 				this.card = card;
 			}
 			
@@ -240,7 +275,7 @@ public class HeapModus extends FetchModus {
 				return left == null && right == null;
 			}
 			
-			public Node getNodeWithCard(SylladexCard card) {
+			public Node getNodeWithCard(CaptchalogueCard card) {
 				if (this.card == card) return this;
 				if (left != null && left.getNodeWithCard(card) != null)
 					return left.getNodeWithCard(card);
@@ -249,7 +284,7 @@ public class HeapModus extends FetchModus {
 				return null;
 			}
 			
-			public void buildAnimation(SylladexCard card) {
+			public void buildAnimation(CaptchalogueCard card) {
 				// TODO write this
 			}
 		}
