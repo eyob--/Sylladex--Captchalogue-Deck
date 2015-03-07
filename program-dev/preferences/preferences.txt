@@ -7,8 +7,8 @@ BOOL :true
 BOOL :false
 BOOL :true
 BOOL :true
-INT :6
-STRING :canon/ArrayModus
+INT :5
+STRING :canon/HeapModus
 INT :0
 INT :2
 INT :4

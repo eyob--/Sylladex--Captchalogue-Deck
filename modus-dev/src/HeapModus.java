@@ -39,12 +39,14 @@ public class HeapModus extends FetchModus {
 			arrangeCards();
 		}
 		else if (e.getActionCommand().equals("heap_animation_continue")) {
+			System.out.println("heap continue");
 			Object target = ((Animation) e.getSource()).getAnimationTarget();
 			if (target instanceof CaptchalogueCard) {
 				CaptchalogueCard card = (CaptchalogueCard) target;
 				card.setVisible(true);
 				card.setLayer(getLayer(card.getX(), card.getY() + settings.get_card_height()));
 			}
+			System.out.println("end of heap continue");
 		}
 		else if (e.getActionCommand().equals("heap_eject")) {
 			int n = JOptionPane.showOptionDialog(preferences_panel, "EJECT ALL ITEMS FROM SYLLADEX?", "",
@@ -79,14 +81,17 @@ public class HeapModus extends FetchModus {
 	@Override
 	public boolean captchalogue(SylladexItem item) {
 		if (deck.isFull()) return false;
+		System.out.println("captchaloguing");
 		
 		CaptchalogueCard card = deck.captchalogueItemAndReturnCard(item);
+		System.out.println("adding");
 		heap.add(card);
+		System.out.println("added");
 		
-		heap.buildAnimation(card);
 		Animation a = new Animation(AnimationType.WAIT, 10, this, "heap_animation_complete");
 		a.setAnimationTarget(card);
 		deck.addAnimation(a);
+		System.out.println("captchalogued");
 		return true;
 	}
 	
@@ -102,6 +107,7 @@ public class HeapModus extends FetchModus {
 
 	@Override
 	public void initialSettings() {
+		System.out.println("start init settings...");
 		settings.set_dock_text_image("modi/canon/heap/text.png");
 		settings.set_dock_card_image("modi/canon/heap/dockcard.png");
 		settings.set_card_image("modi/canon/heap/card.png");
@@ -123,7 +129,7 @@ public class HeapModus extends FetchModus {
 		settings.set_card_size(94, 119);
 		
 		settings.set_shade_inaccessible_cards(false);
-		
+		System.out.println("end init settings");
 	}
 
 	@Override
@@ -156,7 +162,9 @@ public class HeapModus extends FetchModus {
 	
 	@Override
 	public void refreshDock() {
+		System.out.println("refreshing dock...");
 		arrangeCards();
+		System.out.println("dock refreshed");
 	}
 	
 	private void arrangeCards() {
@@ -314,23 +322,48 @@ public class HeapModus extends FetchModus {
 			root = null;
 		}
 		
+		public Heap getClone() {
+			try {
+				return (Heap) this.clone();
+			} catch (CloneNotSupportedException e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
+		
 		public void add(CaptchalogueCard card) {
 			Node node = new Node(card);
 			if (root == null) {
 				root = node;
 				return;
 			}
-			
+			System.out.println("getting insert node");
 			Node insertOn = nodeToInsertOn();	// "but doesn't that make it an O(n) insertion time?" yes. it does. got a problem?
+			System.out.println("insert node gotten");
 			if (insertOn.left == null) insertOn.left = node;
 			else insertOn.right = node;
 			
+			card.setLocation(node.getX(), node.getY());
+			
+			System.out.println("location set");
+			
 			while (node.card.getItem().getName().toLowerCase().compareTo(node.parent.card.getItem().getName().toLowerCase()) > 0) {
+				System.out.println("going up...");
+				System.out.println("wait stuff");
+				Animation wait = new Animation(AnimationType.WAIT, 200, null, "heap_animation_continue");
+				wait.setAnimationTarget(card);
+				deck.addAnimation(wait);
+				System.out.println("wait stuff done");
+				
 				node.card = node.parent.card;
+				deck.moveCard(node.parent.card, new Point(node.getX(), node.getY()), AnimationType.BOUNCE);
 				node.parent.card = card;
+				deck.moveCard(card, new Point(node.parent.getX(), node.parent.getY()), AnimationType.BOUNCE);
 				node = node.parent;
+				
 				if (node == root) return;
 			}
+			System.out.println("end of add");
 		}
 		
 		/**
@@ -341,7 +374,7 @@ public class HeapModus extends FetchModus {
 		public Node nodeToInsertOn() {
 			ArrayList<Node> level = new ArrayList<Node>();
 			level.add(root);
-			if(root.left != null && root.right != null) return root;
+			if(root.left == null || root.right == null) return root;
 			while (true) {		// Oh god this is so dangerous...
 				ArrayList<Node> oldLevel = (ArrayList<Node>) level.clone();
 				level = new ArrayList<Node>();
@@ -372,9 +405,6 @@ public class HeapModus extends FetchModus {
 		}
 		
 		public void buildAnimation(CaptchalogueCard card) {
-			card.setLocation(new Point(0, 0));
-			Node insert = nodeToInsertOn();
-			nodeToInsertOn().buildAnimation(card);
 		}
 		
 		public class Node {
@@ -432,7 +462,6 @@ public class HeapModus extends FetchModus {
 			}
 			
 			public void buildAnimation(CaptchalogueCard c) {
-				// TODO write this
 			}
 		}
 	}
